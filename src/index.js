@@ -15,11 +15,7 @@ let api = {},
             Object.entries(Object.getOwnPropertyDescriptors(values)).forEach(
                 ([key, desc]) => {
                     let signal = api.is(desc.value) ? desc.value : api.signal(resolve(desc.value)),
-                        memo = desc.get ?
-                            api.memo ?
-                                api.memo(desc.get.bind(state)) :
-                                desc.get.bind(state)?.() :
-                            signal;
+                        memo = desc.get ? api.memo ? api.memo(desc.get.bind(state)) : desc.get.bind(state)?.() : signal;
                     Object.defineProperty(state, key, {
                         get: () => desc.get ? memo : api.get(memo),
                         set: desc.get ? desc.set?.bind(state) : v => api.set(signal, resolve(v)),
