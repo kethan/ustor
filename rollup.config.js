@@ -35,5 +35,5 @@ const resolve = (pkg, input = "src/index", output = "dist/index") => ({
 });
 
 export default [
-	resolve("template")
+	resolve("ustor")
 ]
