@@ -1,6 +1,6 @@
 # UStor
 
-[![tests](https://github.com/ustor/actions/workflows/node.js.yml/badge.svg)](https://github.com/ustor/actions/workflows/node.js.yml) [![Version](https://img.shields.io/npm/v/ustor.svg?color=success&style=flat-square)](https://www.npmjs.com/package/ustor) [![Badge size](https://deno.bundlejs.com/badge?q=ustor&treeshake=[*]&config={"compression":"brotli"})](https://unpkg.com/ustor) [![Badge size](https://deno.bundlejs.com/badge?q=ustor&treeshake=[*]&config={"compression":"gzip"})](https://unpkg.com/ustor)
+[![tests](https://github.com/kethan/ustor/actions/workflows/node.js.yml/badge.svg)](https://github.com/ustor/actions/workflows/node.js.yml) [![Version](https://img.shields.io/npm/v/ustor.svg?color=success&style=flat-square)](https://www.npmjs.com/package/ustor) [![Badge size](https://deno.bundlejs.com/badge?q=ustor&treeshake=[*]&config={"compression":"brotli"})](https://unpkg.com/ustor) [![Badge size](https://deno.bundlejs.com/badge?q=ustor&treeshake=[*]&config={"compression":"gzip"})](https://unpkg.com/ustor)
 
 # Reactive Store Library
 
@@ -23,7 +23,7 @@ This library provides a powerful reactivity system for creating stateful objects
   - [Deeply Nested Structures](#deeply-nested-structures)
   - [Arrays and Objects](#arrays-and-objects)
   - [Reactivity and Effects](#reactivity-and-effects)
-- [Integration with Solid.js, Preact Signals, and React](#integration-with-solidjs-preact-signals-and-react)
+- [Integration with Solid.js, Preact Signals, and React or anything](#integration-with-solidjs-preact-signals-and-react)
 
 ## Installation
 
@@ -42,14 +42,24 @@ First, import the `store` function and the `api` object. You need to initialize 
 
 ```javascript
 import { store, api } from "./src";
-// import { signal } from '@preact/signals-core';
+// import { signal } from '@preact/signals-core'; // 'usignal' 'ulive'
 import { createSignal } from "solid-js";
 
 // Solid.js setup
 api.signal = createSignal;
-api.get = (v) => v?.[0]();
-api.set = (signal, v) => signal?.[1](v);
-api.is = (v) => v?.[0]?.name?.includes("readSignal");
+api.get = (v) => v[0]();
+api.set = (signal, v) => signal[1](v);
+api.is = (v) =>
+	(Array.isArray(v) &&
+		typeof v[0] === "function" &&
+		typeof v[1] === "function") ||
+	v[0]?.name?.includes("readSignal");
+
+// @preact/signals-core, usignal or ulive setup
+api.signal = signal;
+api.get = (v) => v.value;
+api.set = (signal, v) => (signal.value = v);
+api.is = (v) => v?.peek;
 ```
 
 ## API
@@ -141,11 +151,11 @@ The `store` function can also handle deeply nested objects, converting nested pr
 
 ```javascript
 const s = store({ nested: { deep: { value: 10 } } });
-const deepValue = api.get(s.nested.deep.value) * 2;
+const deepValue = s.nested.deep.value * 2;
 
 console.log(deepValue); // 20
 s.nested.deep.value = 15;
-console.log(api.get(s.nested.deep.value) * 2); // 30
+console.log(s.nested.deep.value) * 2; // 30
 ```
 
 ### Arrays and Objects
@@ -163,13 +173,13 @@ console.log(s.list.reduce((acc, item) => acc + item, 0)); // 9
 
 ### Reactivity and Effects
 
-The library integrates with effects to track dependencies and automatically re-run whenever dependencies change:
+The signal value trigger with effects to track dependencies and automatically re-run whenever dependencies change:
 
 ```javascript
 const s = store({ a: 1 });
 let effectValue = 0;
 
-api.effect(() => {
+effect(() => {
 	effectValue = s.a * 2;
 });
 
@@ -220,7 +230,8 @@ api.is = (v) => Array.isArray(v) && typeof v[1] === "function";
 
 const state = store({
 	count: 0,
-	get double() { //useMemo
+	get double() {
+		//useMemo
 		return useMemo(() => {
 			return this.count * this.count;
 		}, [this.count]);
@@ -228,8 +239,22 @@ const state = store({
 });
 ```
 
-The library provides a unified API to work with different reactive systems, allowing you to switch between Solid.js, Preact Signals, React, or any other UI framework easily.
+To use any signal library
 
+```javascript
+import ... from "...";
+
+api.signal = ...;
+api.get = ...;
+api.set = (signal, value) => ...;
+api.is = (v) => ...;
+
+const state = store({
+	count: 0
+});
+```
+
+The library provides a unified API to work with different reactive systems, allowing you to switch between Solid.js, Preact Signals, React, or any other UI framework easily.
 
 ### License
 
