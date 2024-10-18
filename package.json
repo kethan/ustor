@@ -1,0 +1,56 @@
+{
+	"name": "ustor",
+	"description": "A lightweight reactive store library that provides a powerful reactivity system for managing state, compatible with any UI framework, including React, Solid.js, and Preact Signals.",
+	"version": "0.0.1",
+	"type": "module",
+	"source": "./src/index.js",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"unpkg": "./dist/index.min.js",
+	"umd:main": "./dist/index.umd.js",
+	"exports": {
+		"browser": "./dist/index.es.js",
+		"umd": "./dist/index.umd.js",
+		"require": "./dist/index.js",
+		"import": "./dist/index.es.js",
+		"default": "./dist/index.es.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kethan/ustor.git"
+	},
+	"scripts": {
+		"build": "rollup --config rollup.config.js",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@preact/signals-core": "^1.8.0",
+		"@rollup/plugin-terser": "^0.4.4",
+		"rollup": "^4.24.0",
+		"rollup-plugin-bundle-size": "^1.0.3",
+		"solid-js": "^1.9.2",
+		"ulive": "^1.0.7",
+		"vitest": "^2.1.3"
+	},
+	"keywords": [
+		"ustor",
+		"ustore",
+		"store",
+		"signal",
+		"createmutable",
+		"mutable",
+		"createstore",
+		"react",
+		"preact",
+		"solid.js",
+		"state",
+		"observable",
+		"reactive"
+	],
+	"author": "Kethan Surana",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/kethan/ustor/issues"
+	},
+	"homepage": "https://github.com/kethan/ustor#readme"
+}
