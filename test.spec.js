@@ -1,28 +1,52 @@
-import { store, api } from './src';
-// import { signal, computed, effect, batch } from '@preact/signals-core';
-import { createSignal, createEffect, createMemo, batch } from './node_modules/solid-js/dist/solid'
 import { assert, describe, it } from 'vitest';
-
-
-//Solid.js
-api.memo = createMemo;
-api.signal = createSignal;
-api.effect = createEffect;
-api.batch = batch;
-api.getMemo = v => v?.();
-api.is = v => v?.[0]?.name?.includes("readSignal");
-api.get = v => v?.[0]();
-api.set = (signal, v) => signal?.[1](v);
+import { signal, computed, effect, batch } from '@preact/signals-core';
+// import { createSignal, createEffect, createMemo, batch } from './node_modules/solid-js/dist/solid'
+// import { observable, isObservable, memo, effect, batch } from 'oby';
+// import { observable, subscribe, computed, transaction } from 'sinuous/observable'
+// import { reactive } from "@reactively/core";
+import { store, api } from './src';
 
 // @preact/signals-core, usignal, ulive
-// api.memo = computed;
-// api.signal = signal;
+api.memo = computed;
+api.signal = signal;
+api.effect = effect;
+api.batch = batch;
+api.getMemo = v => v?.value;
+api.is = (v) => v?.peek;
+api.get = (v) => v?.value;
+api.set = (signal, v) => (signal.value = v);
+
+//Solid.js
+// api.memo = createMemo;
+// api.signal = createSignal;
+// api.effect = createEffect;
+// api.batch = batch;
+// api.getMemo = v => v?.();
+// api.is = v => v?.[0]?.name?.includes("readSignal");
+// api.get = v => v?.[0]();
+// api.set = (signal, v) => signal?.[1](v);
+
+// oby
+// api.memo = memo;
+// api.signal = observable;
 // api.effect = effect;
 // api.batch = batch;
-// api.getMemo = v => v?.value;
-// api.is = (v) => v?.peek;
-// api.get = (v) => v?.value;
-// api.set = (signal, v) => (signal.value = v);
+// api.getMemo = v => v?.();
+// api.is = (v) => isObservable(v);
+// api.get = (v) => v?.();
+// api.set = (signal, v) => signal(v);
+
+// Sinuous/observable
+// api.memo = computed;
+// api.signal = observable;
+// api.effect = subscribe;
+// api.batch = transaction;
+// api.getMemo = v => v?.();
+// api.is = (v) => v?.$o;
+// api.get = (v) => v?.();
+// api.set = (signal, v) => signal(v);
+
+// reactively
 
 describe('Store functionality', () => {
   let i = api.signal(3);

@@ -23,7 +23,7 @@ This library provides a powerful reactivity system for creating stateful objects
   - [Deeply Nested Structures](#deeply-nested-structures)
   - [Arrays and Objects](#arrays-and-objects)
   - [Reactivity and Effects](#reactivity-and-effects)
-- [Integration with Solid.js, Preact Signals, and React or anything](#integration-with-solidjs-preact-signals-and-react)
+- [Integration with Solid.js, Preact Signals or any](#integration-with-solidjs-preact-signals-or-any)
 
 ## Installation
 
@@ -34,7 +34,7 @@ npm install ustor
 yarn add ustor
 ```
 
-This library can be integrated `solid-js`, `@preact/signals-core`, `ulive`, `usignal`, `oby`, `sinuous`, `react` for managing reactive signals or any other libarary you can think of.
+This library can be integrated with `solid-js`, `@preact/signals-core`, `ulive`, `usignal`, `oby`, `sinuous` any other libarary you can think of for managing reactive signals.
 
 ## Setup
 
@@ -42,8 +42,8 @@ First, import the `store` function and the `api` object. You need to initialize 
 
 ```javascript
 import { store, api } from "./src";
-// import { signal } from '@preact/signals-core'; // 'usignal' 'ulive'
 import { createSignal } from "solid-js";
+// import { signal } from '@preact/signals-core'; // 'usignal' 'ulive'
 
 // Solid.js setup
 api.signal = createSignal;
@@ -188,7 +188,7 @@ s.a = 4;
 console.log(effectValue); // 8
 ```
 
-## Integration with Solid.js, Preact Signals, and React
+## Integration with Solid.js, Preact Signals or any
 
 This library can be used with Solid.js, Preact Signals, React, or any other UI framework to provide reactive signals.
 
@@ -216,27 +216,6 @@ api.signal = signal;
 api.get = (v) => v?.value;
 api.set = (signal, v) => (signal.value = v);
 api.is = (v) => v?.peek;
-```
-
-To use React:
-
-```javascript
-import { useState, useMemo } from "react";
-
-api.signal = useState;
-api.get = (signal) => signal?.[0]();
-api.set = (signal, value) => signal?.[1](value);
-api.is = (v) => Array.isArray(v) && typeof v[1] === "function";
-
-const state = store({
-	count: 0,
-	get double() {
-		//useMemo
-		return useMemo(() => {
-			return this.count * this.count;
-		}, [this.count]);
-	},
-});
 ```
 
 To use any signal library
