@@ -190,7 +190,7 @@ console.log(effectValue); // 8
 
 ## Integration with Solid.js, Preact Signals or any
 
-This library can be used with Solid.js, Preact Signals, React, or any other UI framework to provide reactive signals.
+This library can be used with Solid.js, Preact Signals, or any other UI framework to provide reactive signals.
 
 To use Solid.js:
 
@@ -233,7 +233,7 @@ const state = store({
 });
 ```
 
-The library provides a unified API to work with different reactive systems, allowing you to switch between Solid.js, Preact Signals, React, or any other UI framework easily.
+The library provides a unified API to work with different reactive systems, allowing you to switch between Solid.js, Preact Signals, or any other UI framework easily.
 
 ### License
 
