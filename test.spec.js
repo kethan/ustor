@@ -391,4 +391,16 @@ describe('Extreme Testing - Simple Reactivity', () => {
     // cleanupEffect();
     // assert.equal(s.a, 1);
   });
+
+  it('$ should return the value of a signal', () => {
+    let signala = api.signal(10);
+    let signalb = api.signal(20);
+    const s = store({ a: signala, deep: { nest : { b: signalb}}});    
+    assert.equal(s.$a, signala);
+    assert.equal(s.deep.nest.$b, signalb);
+    assert.equal(s.a, 10);
+    assert.equal(s.deep.nest.b, 20);
+    assert.equal(api.get(s.$a), 10);
+    assert.equal(api.get(s.deep.nest.$b), 20)
+  })
 });

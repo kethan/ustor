@@ -23,6 +23,8 @@ This library provides a powerful reactivity system for creating stateful objects
   - [Deeply Nested Structures](#deeply-nested-structures)
   - [Arrays and Objects](#arrays-and-objects)
   - [Reactivity and Effects](#reactivity-and-effects)
+	- [`state.$prop`](#stateprop)
+
 - [Integration with Solid.js, Preact Signals or any](#integration-with-solidjs-preact-signals-or-any)
 
 ## Installation
@@ -188,6 +190,17 @@ s.a = 4;
 console.log(effectValue); // 8
 ```
 
+### `state.$prop`
+
+The `$` properties are automatically generated for each property in the store. These `$`-prefixed properties contain the underlying signal, providing direct access to the signal itself, separate from the reactive value it holds. The `$` properties are non-enumerable and are useful when you need to access or manipulate the signal directly, rather than the reactive value.
+
+For example, if you have a store with a count property:
+
+```js
+const s = store({ count: 0 });
+console.log(s.count); // 0
+console.log(s.$count); // The underlying signal object
+```
 ## Integration with Solid.js, Preact Signals or any
 
 This library can be used with Solid.js, Preact Signals, or any other UI framework to provide reactive signals.

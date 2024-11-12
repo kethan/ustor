@@ -1,7 +1,7 @@
 {
 	"name": "ustor",
 	"description": "A lightweight reactive store library that provides a powerful reactivity system for managing state, compatible with any UI framework, including Solid.js, and Preact Signals.",
-	"version": "0.0.9",
+	"version": "0.1.0",
 	"type": "module",
 	"source": "./src/index.js",
 	"main": "./dist/index.js",
