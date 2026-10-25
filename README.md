@@ -18,6 +18,7 @@ A tiny, dependency-free reactive store for JavaScript objects and arrays. UStor 
 - [Installation](#installation)
 - [Quickstart](#quickstart)
 - [Common use cases](#common-use-cases)
+- [Examples](#examples)
 - [API reference](#api-reference)
 - [Arrays](#arrays)
 - [Supported adapters](#supported-adapters)
@@ -146,6 +147,10 @@ ui.theme = "dark";
 ```
 
 Create request- or component-specific stores when the state must not be shared. See [SSR and Next.js](#ssr-and-nextjs).
+
+## Examples
+
+The [source example collection](examples/README.md) contains runnable Node programs for counters, carts, validation, async race handling, undo history, Vue, and RxJS; React and Next.js components; a browser import-map demo; and TypeScript examples. Run `npm run examples` to build, execute the isolated Node examples, and type-check the component/TypeScript sources.
 
 ## API reference
 
@@ -672,6 +677,7 @@ npm test                 # build, type tests, unit/adapter/React/SSR tests, pack
 npm run typecheck        # strict TypeScript declaration tests
 npm run test:coverage    # enforced 100% runtime coverage
 npm run test:watch
+npm run examples         # isolated Node examples and JSX/TypeScript checks
 npm run profile:smoke
 npm run build
 ```
