@@ -12,7 +12,7 @@ const resolve = (pkg, input = "src/index", output = "dist/index") => ({
 			format: 'es',
 		},
 		{
-			file: `${output}.js`,
+			file: `${output}.cjs`,
 			format: 'cjs',
 		},
 		{
@@ -35,5 +35,21 @@ const resolve = (pkg, input = "src/index", output = "dist/index") => ({
 });
 
 export default [
-	resolve("ustor")
-]
+	resolve("ustor"),
+	{
+		input: "src/react.js",
+		external: ["react"],
+		output: [
+			{
+				file: "dist/react.es.js",
+				format: "es",
+				plugins: [terser()],
+			},
+			{
+				file: "dist/react.cjs",
+				format: "cjs",
+				plugins: [terser()],
+			},
+		],
+	},
+];
