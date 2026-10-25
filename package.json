@@ -40,6 +40,9 @@
 		"typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.nodenext.json",
 		"test:watch": "vitest",
 		"test:coverage": "vitest --run --coverage",
+		"examples": "npm run examples:node && npm run examples:typecheck",
+		"examples:node": "npm run build && node scripts/run-examples.mjs",
+		"examples:typecheck": "tsc -p tsconfig.examples.json",
 		"profile": "node --expose-gc scripts/profile.mjs",
 		"profile:smoke": "node --expose-gc scripts/profile.mjs --updates=5000 --array-updates=500 --seconds=0.5 --cycles=500 --sample-ms=100",
 		"prepack": "npm run build"
@@ -48,6 +51,7 @@
 		"@preact/signals-core": "^1.14.4",
 		"@rollup/plugin-terser": "^1.0.2",
 		"@tanstack/store": "^0.11.2",
+		"@types/react": "^19.3.0",
 		"@vitest/coverage-v8": "^5.0.5",
 		"@vue/reactivity": "^3.5.44",
 		"@webreflection/alien-signals": "^0.4.2",

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>UStor browser example</title>
+		<style>
+			body { max-width: 40rem; margin: 3rem auto; padding: 0 1rem; font: 1rem system-ui; }
+			button { margin-right: 0.5rem; }
+			output { display: block; margin-top: 1rem; }
+		</style>
+		<script type="importmap">
+			{
+				"imports": {
+					"ustor": "../../dist/index.es.js",
+					"@preact/signals-core": "../../node_modules/@preact/signals-core/dist/signals-core.mjs"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<h1>UStor without a bundler</h1>
+		<button id="increment" type="button">Increment</button>
+		<button id="add-item" type="button">Add current count to list</button>
+		<output id="count"></output>
+		<output id="items"></output>
+		<script type="module" src="./app.js"></script>
+	</body>
+</html>
