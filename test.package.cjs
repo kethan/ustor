@@ -40,9 +40,14 @@ const exercise = (module) => {
 
 	exercise(require("ustor"));
 	exercise(await import("ustor"));
-	assert.equal(typeof require("ustor/react").useStore, "function");
-	assert.equal(typeof require("ustor/react").useSignal, "function");
-	assert.equal(typeof (await import("ustor/react")).useStore, "function");
+	const reactCjs = require("ustor/react");
+	const reactEsm = await import("ustor/react");
+	assert.equal(typeof reactCjs.useSelector, "function");
+	assert.equal(typeof reactEsm.useSelector, "function");
+	assert.equal(reactCjs.useStore, undefined);
+	assert.equal(reactCjs.useSignal, undefined);
+	assert.equal(reactEsm.useStore, undefined);
+	assert.equal(reactEsm.useSignal, undefined);
 
 	const minified = fs.readFileSync(path.join(__dirname, "dist", "index.min.js"));
 	assert.ok(minified.length <= 2048, `minified bundle exceeded 2 KiB: ${minified.length} bytes`);

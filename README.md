@@ -473,22 +473,23 @@ npm run profile
 
 ## React
 
-Install React and import the optional hooks:
+Install React and import the optional hook:
 
 ```bash
 npm install react
 ```
 
 ```jsx
-import { useSignal, useStore } from "ustor/react";
+import { useSelector } from "ustor/react";
 
 // Uses the Preact configuration from Quickstart, including api.effect.
 const state = store({ count: 1, items: [1, 2] });
+const selectCount = () => state.count;
 const selectTotal = () => state.items.reduce((sum, value) => sum + value, 0);
 
 export function Counter() {
-	const count = useSignal(state.$count);
-	const total = useStore(selectTotal);
+	const count = useSelector(selectCount);
+	const total = useSelector(selectTotal);
 
 	return (
 		<button onClick={() => { state.count++; state.items.push(state.count); }}>
@@ -498,18 +499,18 @@ export function Counter() {
 }
 ```
 
-- `useSignal(signal)` subscribes to one `$property` signal.
-- `useStore(selector)` tracks all compatible signal reads in the selector, including array versions.
+- `useSelector(selector)` is the single React hook for both simple properties and derived values.
+- It tracks all compatible signal reads in the selector, including array versions.
 - Selectors must return a primitive or stable reference, not a fresh object on every read.
 - Keep selector functions stable with `useCallback` when they are created inside a component.
 - React is an optional peer dependency and is excluded from the core bundle.
 - StrictMode and unmount cleanup are tested.
 
-Plain property reads do not schedule React renders by themselves; use the hooks or another React binding.
+Plain property reads do not schedule React renders by themselves; use the hook or another React binding.
 
 ## SSR and Next.js
 
-Yes. `useStore` and `useSignal` provide a server snapshot through `useSyncExternalStore`. Server rendering creates no effects; subscriptions start on the client.
+Yes. `useSelector` provides a server snapshot through `useSyncExternalStore`. Server rendering creates no effects; subscriptions start on the client.
 
 The test suite verifies:
 
@@ -520,14 +521,14 @@ The test suite verifies:
 
 ### Next.js App Router example
 
-Use the hooks in a **Client Component**. Create request- or component-owned state instead of exporting a request-specific singleton.
+Use the hook in a **Client Component**. Create request- or component-owned state instead of exporting a request-specific singleton.
 
 ```jsx
 "use client";
 
 import { useCallback, useState } from "react";
 import { store } from "ustor";
-import { useSignal, useStore } from "ustor/react";
+import { useSelector } from "ustor/react";
 // Import your shared adapter configuration once:
 // import "@/lib/ustor-setup";
 
@@ -536,12 +537,13 @@ export default function Counter({ initialCount }) {
 		count: initialCount,
 		items: [1, 2],
 	}));
+	const selectCount = useCallback(() => state.count, [state]);
 	const selectTotal = useCallback(
 		() => state.items.reduce((sum, value) => sum + value, 0),
 		[state],
 	);
-	const count = useSignal(state.$count);
-	const total = useStore(selectTotal);
+	const count = useSelector(selectCount);
+	const total = useSelector(selectTotal);
 
 	return (
 		<button onClick={() => { state.count++; state.items.push(1); }}>
@@ -577,7 +579,7 @@ Declarations are included for both entry points; no separate `@types/ustor` pack
 
 ```typescript
 import { store } from "ustor";
-import { useStore } from "ustor/react";
+import { useSelector } from "ustor/react";
 
 const state = store({
 	count: 1,
@@ -591,14 +593,13 @@ state.count = 2;             // valid
 
 const doubled: number = state.double;
 const text: string = state.nested.text;
-const total = useStore(() => state.list.reduce((sum, value) => sum + value, 0));
+const total = useSelector(() => state.list.reduce((sum, value) => sum + value, 0));
 ```
 
 Exported type utilities:
 
 - `SignalApi<Signal, Computed>` for custom adapters.
 - `Store<T>` for reactive store inference.
-- `SignalValue<Signal>` for React signal-value inference.
 
 Run the repository's strict compile-time tests with:
 

@@ -37,10 +37,10 @@ The Vue and RxJS files intentionally run in their own processes. Do not switch `
 
 ## React
 
-- `react/Counter.jsx` uses a primitive `useStore` selector for a shared client-only counter.
+- `react/Counter.jsx` uses a primitive `useSelector` selector for a shared client-only counter.
 - `react/TodoList.jsx` creates component-owned state and subscribes with primitive selectors for item count, remaining count, and draft text.
 
-These are component source examples, not a bundled React application. Copy them into a React app, install `react` and `@preact/signals-core`, and import the shared setup before rendering. `TodoList` deliberately does **not** use `useStore(() => state.todos)`: that returns the same mutable proxy, so an in-place mutation does not provide a changed React snapshot. Primitive selectors (or genuinely changed references) are the correct subscription boundary.
+These are component source examples, not a bundled React application. Copy them into a React app, install `react` and `@preact/signals-core`, and import the shared setup before rendering. `TodoList` deliberately does **not** use `useSelector(() => state.todos)`: that returns the same mutable proxy, so an in-place mutation does not provide a changed React snapshot. Primitive selectors (or genuinely changed references) are the correct subscription boundary.
 
 ## Next.js App Router
 

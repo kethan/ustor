@@ -5,7 +5,7 @@ import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { effect, signal } from "@preact/signals-core";
 import { api, store } from "./src/index.js";
-import { useSignal, useStore } from "./src/react.js";
+import { useSelector } from "./src/react.js";
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -34,11 +34,12 @@ afterEach(() => {
 describe("server rendering and hydration", () => {
 	it("renders on the server without creating effects", () => {
 		const state = store({ count: 2, list: [1, 2] });
+		const selectCount = () => state.count;
 		const selectTotal = () => state.list.reduce((sum, value) => sum + value, 0);
 		const View = () => createElement(
 			"div",
 			null,
-			`${useSignal(state.$count)}:${useStore(selectTotal)}`,
+			`${useSelector(selectCount)}:${useSelector(selectTotal)}`,
 		);
 		delete api.effect;
 		expect(renderToString(createElement(View))).toBe("<div>2:3</div>");
@@ -48,7 +49,8 @@ describe("server rendering and hydration", () => {
 		delete api.effect;
 		const renderRequest = (count) => {
 			const state = store({ count });
-			const View = () => createElement("span", null, useSignal(state.$count));
+			const selectCount = () => state.count;
+			const View = () => createElement("span", null, useSelector(selectCount));
 			return renderToString(createElement(View));
 		};
 		expect(renderRequest(1)).toBe("<span>1</span>");
@@ -58,11 +60,12 @@ describe("server rendering and hydration", () => {
 
 	it("hydrates without mismatches and reacts to later updates", () => {
 		const state = store({ count: 1, list: [1, 2] });
+		const selectCount = () => state.count;
 		const selectTotal = () => state.list.reduce((sum, value) => sum + value, 0);
 		const View = () => createElement(
 			"main",
 			null,
-			`${useSignal(state.$count)}:${useStore(selectTotal)}`,
+			`${useSelector(selectCount)}:${useSelector(selectTotal)}`,
 		);
 		let subscriptions = 0;
 		const preactEffect = api.effect;

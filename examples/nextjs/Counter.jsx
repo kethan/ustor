@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useStore } from "ustor/react";
+import { useSelector } from "ustor/react";
 import { store } from "../preact-setup.mjs";
 
 /** @param {{ initialCount: number, initialItems: number[] }} props */
@@ -16,8 +16,8 @@ export default function Counter({ initialCount, initialItems }) {
 		() => state.items.reduce((sum, value) => sum + value, 0),
 		[state],
 	);
-	const count = useStore(selectCount);
-	const total = useStore(selectTotal);
+	const count = useSelector(selectCount);
+	const total = useSelector(selectTotal);
 
 	return (
 		<button type="button" onClick={() => { state.count++; state.items.push(1); }}>
