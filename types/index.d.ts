@@ -1,10 +1,10 @@
-export interface SignalApi<Signal = any, Memo = any> {
+export interface SignalApi<Signal = any, Computed = any> {
 	signal(value: any): Signal;
 	get(signal: Signal): any;
 	set(signal: Signal, value: any): void;
 	is(value: unknown): boolean;
-	memo?(fn: () => any): Memo;
-	getMemo?(memo: Memo): any;
+	computed?(fn: () => any): Computed;
+	getComputed?(computed: Computed): any;
 	effect?(fn: () => void): () => void;
 	[key: string]: unknown;
 }

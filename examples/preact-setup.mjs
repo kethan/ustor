@@ -5,10 +5,10 @@ import { batch, computed, effect, signal } from "@preact/signals-core";
 // small setup module imported by their entry point.
 Object.assign(api, {
 	signal,
-	memo: computed,
+	computed,
 	effect,
 	get: (/** @type {{ value: any }} */ value) => value.value,
-	getMemo: (/** @type {{ value: any }} */ value) => value.value,
+	getComputed: (/** @type {{ value: any }} */ value) => value.value,
 	set: (/** @type {{ value: any }} */ target, /** @type {any} */ value) => { target.value = value; },
 	is: (/** @type {any} */ value) => typeof value?.peek === "function",
 });

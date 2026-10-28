@@ -4,8 +4,8 @@ import { api, store } from "../src/index.js";
 
 Object.assign(api, {
 	signal,
-	memo: computed,
-	getMemo: (value) => value.value,
+	computed,
+	getComputed: (value) => value.value,
 	get: (value) => value.value,
 	set: (target, value) => { target.value = value; },
 	is: (value) => typeof value?.peek === "function",
