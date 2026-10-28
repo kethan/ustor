@@ -5,9 +5,9 @@ import { api, store } from "ustor";
 // Vue uses shallow refs so it does not wrap UStor's proxies a second time.
 Object.assign(api, {
 	signal: shallowRef,
-	memo: computed,
+	computed,
 	get: (value) => value.value,
-	getMemo: (value) => value.value,
+	getComputed: (value) => value.value,
 	set: (target, value) => { target.value = value; },
 	is: isRef,
 });

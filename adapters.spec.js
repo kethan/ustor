@@ -1,37 +1,37 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { computed as preactMemo, signal as preactSignal } from "@preact/signals-core";
-import { createMemo as solidMemo, createRoot as solidRoot, createSignal as solidSignal } from "solid-js/dist/solid";
-import { isObservable as isObyObservable, memo as obyMemo, observable as obySignal } from "oby";
-import { computed as sinuousMemo, observable as sinuousSignal } from "sinuous/observable";
-import { computed as liveMemo, signal as liveSignal } from "ulive";
-import { Signal as USignal, computed as uSignalMemo, signal as uSignal } from "usignal";
-import { computed as vueMemo, effectScope as vueEffectScope, isRef as isVueRef, shallowRef as vueSignal } from "@vue/reactivity";
-import { computed as alienMemo, isSignal as isAlienSignal, signal as alienSignal } from "alien-signals";
+import { computed as preactComputed, signal as preactSignal } from "@preact/signals-core";
+import { createMemo as solidComputed, createRoot as solidRoot, createSignal as solidSignal } from "solid-js/dist/solid";
+import { isObservable as isObyObservable, memo as obyComputed, observable as obySignal } from "oby";
+import { computed as sinuousComputed, observable as sinuousSignal } from "sinuous/observable";
+import { computed as liveComputed, signal as liveSignal } from "ulive";
+import { Signal as USignal, computed as uSignalComputed, signal as uSignal } from "usignal";
+import { computed as vueComputed, effectScope as vueEffectScope, isRef as isVueRef, shallowRef as vueSignal } from "@vue/reactivity";
+import { computed as alienComputed, isSignal as isAlienSignal, signal as alienSignal } from "alien-signals";
 import S from "s-js";
-import { computed as mobxMemo, isBoxedObservable as isMobxBox, observable as mobxObservable, runInAction as mobxAction } from "mobx";
+import { computed as mobxComputed, isBoxedObservable as isMobxBox, observable as mobxObservable, runInAction as mobxAction } from "mobx";
 import { BehaviorSubject } from "rxjs";
 import { atom as nanoSignal } from "nanostores";
 import { Store as TanStackStore, createStore as createTanStackStore } from "@tanstack/store";
-import { Signal as WRSignal, computed as wrSignalMemo, signal as wrSignal } from "@webreflection/signal";
-import { Signal as WRSignals, computed as wrSignalsMemo, signal as wrSignals } from "@webreflection/signals";
-import { Signal as WRAlienSignal, computed as wrAlienMemo, signal as wrAlienSignal } from "@webreflection/alien-signals";
+import { Signal as WRSignal, computed as wrSignalComputed, signal as wrSignal } from "@webreflection/signal";
+import { Signal as WRSignals, computed as wrSignalsComputed, signal as wrSignals } from "@webreflection/signals";
+import { Signal as WRAlienSignal, computed as wrAlienComputed, signal as wrAlienSignal } from "@webreflection/alien-signals";
 import { api, store } from "./src/index.js";
 
-const valueAdapter = (signal, memo, is) => ({
+const valueAdapter = (signal, computed, is) => ({
 	signal,
-	memo,
+	computed,
 	is,
 	get: (value) => value.value,
-	getMemo: (value) => value.value,
+	getComputed: (value) => value.value,
 	set: (target, value) => { target.value = value; },
 });
 
-const callableAdapter = (signal, memo, is) => ({
+const callableAdapter = (signal, computed, is) => ({
 	signal,
-	memo,
+	computed,
 	is,
 	get: (value) => value(),
-	getMemo: (value) => value(),
+	getComputed: (value) => value(),
 	set: (target, value) => target(value),
 });
 
@@ -39,14 +39,14 @@ const sSignals = new WeakSet();
 const adapters = [
 	{
 		name: "Preact Signals",
-		adapter: valueAdapter(preactSignal, preactMemo, (value) => typeof value?.peek === "function"),
+		adapter: valueAdapter(preactSignal, preactComputed, (value) => typeof value?.peek === "function"),
 	},
 	{
 		name: "Solid.js",
 		adapter: {
 			signal: solidSignal,
-			memo: solidMemo,
-			getMemo: (value) => value(),
+			computed: solidComputed,
+			getComputed: (value) => value(),
 			is: (value) => Array.isArray(value) && typeof value[0] === "function" && typeof value[1] === "function",
 			get: (value) => value[0](),
 			set: (target, value) => target[1](value),
@@ -55,23 +55,23 @@ const adapters = [
 	},
 	{
 		name: "Oby",
-		adapter: callableAdapter(obySignal, obyMemo, isObyObservable),
+		adapter: callableAdapter(obySignal, obyComputed, isObyObservable),
 	},
 	{
 		name: "Sinuous",
-		adapter: callableAdapter(sinuousSignal, sinuousMemo, (value) => !!value?.$o),
+		adapter: callableAdapter(sinuousSignal, sinuousComputed, (value) => !!value?.$o),
 	},
 	{
 		name: "ulive",
-		adapter: valueAdapter(liveSignal, liveMemo, (value) => typeof value?.peek === "function"),
+		adapter: valueAdapter(liveSignal, liveComputed, (value) => typeof value?.peek === "function"),
 	},
 	{
 		name: "usignal",
-		adapter: valueAdapter(uSignal, uSignalMemo, (value) => value instanceof USignal),
+		adapter: valueAdapter(uSignal, uSignalComputed, (value) => value instanceof USignal),
 	},
 	{
 		name: "Vue reactivity",
-		adapter: valueAdapter(vueSignal, vueMemo, isVueRef),
+		adapter: valueAdapter(vueSignal, vueComputed, isVueRef),
 		scope: (fn) => {
 			const scope = vueEffectScope();
 			try { scope.run(fn); } finally { scope.stop(); }
@@ -79,7 +79,7 @@ const adapters = [
 	},
 	{
 		name: "alien-signals",
-		adapter: callableAdapter(alienSignal, alienMemo, (value) => typeof value === "function" && isAlienSignal(value)),
+		adapter: callableAdapter(alienSignal, alienComputed, (value) => typeof value === "function" && isAlienSignal(value)),
 	},
 	{
 		name: "S.js",
@@ -98,8 +98,8 @@ const adapters = [
 		name: "MobX",
 		adapter: {
 			signal: (value) => mobxObservable.box(value, { deep: false }),
-			memo: mobxMemo,
-			getMemo: (value) => value.get(),
+			computed: mobxComputed,
+			getComputed: (value) => value.get(),
 			is: isMobxBox,
 			get: (value) => value.get(),
 			set: (target, value) => mobxAction(() => target.set(value)),
@@ -127,8 +127,8 @@ const adapters = [
 		name: "TanStack Store",
 		adapter: {
 			signal: (value) => new TanStackStore([value]),
-			memo: (fn) => createTanStackStore(fn),
-			getMemo: (value) => value.state,
+			computed: (fn) => createTanStackStore(fn),
+			getComputed: (value) => value.state,
 			is: (value) => value instanceof TanStackStore,
 			get: (value) => value.state[0],
 			set: (target, value) => target.setState(() => [value]),
@@ -136,15 +136,15 @@ const adapters = [
 	},
 	{
 		name: "@webreflection/signal",
-		adapter: valueAdapter(wrSignal, wrSignalMemo, (value) => value instanceof WRSignal),
+		adapter: valueAdapter(wrSignal, wrSignalComputed, (value) => value instanceof WRSignal),
 	},
 	{
 		name: "@webreflection/signals",
-		adapter: valueAdapter(wrSignals, wrSignalsMemo, (value) => value instanceof WRSignals),
+		adapter: valueAdapter(wrSignals, wrSignalsComputed, (value) => value instanceof WRSignals),
 	},
 	{
 		name: "@webreflection/alien-signals",
-		adapter: valueAdapter(wrAlienSignal, wrAlienMemo, (value) => value instanceof WRAlienSignal),
+		adapter: valueAdapter(wrAlienSignal, wrAlienComputed, (value) => value instanceof WRAlienSignal),
 	},
 ];
 
@@ -168,9 +168,9 @@ describe.each(adapters)("$name adapter", ({ adapter, scope }) => {
 		expect(state.nested.value).toBe(4);
 	});
 
-	adapterIt("supports direct getters without the optional memo adapter", () => {
-		delete api.memo;
-		delete api.getMemo;
+	adapterIt("supports direct getters without the optional computed adapter", () => {
+		delete api.computed;
+		delete api.getComputed;
 		const state = store({ a: 2, b: 3, get sum() { return this.a + this.b; } });
 		expect(state.sum).toBe(5);
 		state.a = 5;
@@ -196,17 +196,17 @@ describe.each(adapters)("$name adapter", ({ adapter, scope }) => {
 		expect(state.total).toBe(5);
 	});
 
-	if (adapter.memo) {
-		adapterIt("supports primitive getter values with automatic memoization", () => {
+	if (adapter.computed) {
+		adapterIt("supports primitive getter values with automatic computed values", () => {
 			const state = store({ a: 2, b: 3, get sum() { return this.a + this.b; } });
 			expect(state.sum).toBe(5);
-			expect(api.getMemo(state.$sum)).toBe(5);
+			expect(api.getComputed(state.$sum)).toBe(5);
 			state.a = 5;
 			expect(state.sum).toBe(8);
-			expect(api.getMemo(state.$sum)).toBe(8);
+			expect(api.getComputed(state.$sum)).toBe(8);
 		});
 
-		adapterIt("updates conditional memo dependencies", () => {
+		adapterIt("updates conditional computed dependencies", () => {
 			const state = store({
 				chooseLeft: true,
 				left: 1,

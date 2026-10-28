@@ -54,10 +54,10 @@ import { signal, computed, effect } from "@preact/signals-core";
 
 Object.assign(api, {
 	signal,
-	memo: computed,
+	computed,
 	effect,
 	get: (value) => value.value,
-	getMemo: (value) => value.value,
+	getComputed: (value) => value.value,
 	set: (target, value) => { target.value = value; },
 	is: (value) => typeof value?.peek === "function",
 });
@@ -195,7 +195,7 @@ is(null);    // false
 
 ### `state.$property`
 
-Exposes the underlying signal for a data property, or the underlying memo for a memoized getter.
+Exposes the underlying signal for a data property, or the underlying computed value for a computed getter.
 
 ```javascript
 const state = store({ count: 0 });
@@ -204,7 +204,7 @@ state.$count.value = 2; // Preact signal example
 console.log(state.count); // 2
 ```
 
-Aliases are non-enumerable. Getters without `api.memo` do not have a `$` alias. If an input explicitly defines a conflicting key such as `$count`, the user-defined property takes precedence.
+Aliases are non-enumerable. Getters without `api.computed` do not have a `$` alias. If an input explicitly defines a conflicting key such as `$count`, the user-defined property takes precedence.
 
 ### Adapter API
 
@@ -221,11 +221,11 @@ Optional operations:
 
 | Operation | Purpose |
 | --- | --- |
-| `api.memo(fn)` | Create a lazy computed value. |
-| `api.getMemo(memo)` | Read a memo; defaults to `api.get`. |
+| `api.computed(fn)` | Create a lazy computed value. |
+| `api.getComputed(computed)` | Read a computed value; defaults to `api.get`. |
 | `api.effect(fn)` | Required by `ustor/react`; must auto-track synchronously and return a cleanup function. |
 
-Without `api.memo`, getters execute on each access and still participate in compatible effects. With `api.memo`, getters are lazy and cached while their dependencies remain unchanged.
+Without `api.computed`, getters execute on each access and still participate in compatible effects. With `api.computed`, getters are lazy and cached while their dependencies remain unchanged.
 
 ## Arrays
 
@@ -258,35 +258,35 @@ The configurations in `adapters.spec.js` are executable documentation and includ
 
 | Package | Getter support |
 | --- | --- |
-| `@preact/signals-core` | Automatic memoization |
-| `solid-js` | Automatic memoization |
-| `oby` | Automatic memoization |
-| `sinuous/observable` | Automatic memoization |
-| `ulive` | Automatic memoization |
-| `usignal` | Automatic memoization |
-| `@vue/reactivity` | Automatic memoization using `shallowRef` |
-| `alien-signals` | Automatic memoization |
-| `s-js` | Automatic memoization using the provided branded factory |
-| `mobx` | Automatic memoization using shallow observable boxes |
-| `@tanstack/store` | Automatic memoization using the provided value wrapper |
-| `@webreflection/signal` | Automatic memoization |
-| `@webreflection/signals` | Automatic memoization |
-| `@webreflection/alien-signals` | Automatic memoization |
+| `@preact/signals-core` | Automatic computed values |
+| `solid-js` | Automatic computed values |
+| `oby` | Automatic computed values |
+| `sinuous/observable` | Automatic computed values |
+| `ulive` | Automatic computed values |
+| `usignal` | Automatic computed values |
+| `@vue/reactivity` | Automatic computed values using `shallowRef` |
+| `alien-signals` | Automatic computed values |
+| `s-js` | Automatic computed values using the provided branded factory |
+| `mobx` | Automatic computed values using shallow observable boxes |
+| `@tanstack/store` | Automatic computed values using the provided value wrapper |
+| `@webreflection/signal` | Automatic computed values |
+| `@webreflection/signals` | Automatic computed values |
+| `@webreflection/alien-signals` | Automatic computed values |
 | `rxjs` | Basic: `BehaviorSubject` values and direct getters |
 | `nanostores` | Basic: atoms and direct getters |
 
-**Basic adapters** support synchronous values, nested objects, arrays, and getters evaluated on access. RxJS and Nanostores do not automatically discover arbitrary getter dependencies, so automatic memoization is not advertised for them.
+**Basic adapters** support synchronous values, nested objects, arrays, and getters evaluated on access. RxJS and Nanostores do not automatically discover arbitrary getter dependencies, so automatic computed values are not advertised for them.
 
 Adapter-specific notes:
 
 - Vue and MobX use shallow containers to avoid wrapping UStor's proxies twice.
 - TanStack Store treats bare functions as computed values; its tested adapter wraps writable values.
-- S.js has no built-in signal brand; use the tested factory and create memoized stores inside an S.js root.
-- Solid.js, Vue, S.js, and similar libraries may require their own owner/scope lifecycle for short-lived memos.
+- S.js has no built-in signal brand; use the tested factory and create stores with computed values inside an S.js root.
+- Solid.js, Vue, S.js, and similar libraries may require their own owner/scope lifecycle for short-lived computed values.
 
 ## Porting any signal library
 
-You normally **do not need to modify UStor's core**. Port a library by translating its synchronous read/write API into four required functions, then add optional memo/effect functions when supported.
+You normally **do not need to modify UStor's core**. Port a library by translating its synchronous read/write API into four required functions, then add optional computed/effect functions when supported.
 
 ### 1. Map the four required operations
 
@@ -375,20 +375,20 @@ api.is = (value) => signals.has(value);
 
 Create external signals through `api.signal` when using this approach. The S.js configuration in `adapters.spec.js` demonstrates it.
 
-### 4. Add memoization only when dependencies are automatic
+### 4. Add computed values only when dependencies are automatic
 
 If the library can compute a value by automatically tracking signals read inside `fn`, add:
 
 ```javascript
 Object.assign(api, {
-	memo: (fn) => library.computed(fn),
-	getMemo: (memo) => library.read(memo),
+	computed: (fn) => library.computed(fn),
+	getComputed: (computed) => library.read(computed),
 });
 ```
 
-The memo may be lazy or eager, but it must invalidate when any dependency changes, including conditional dependencies.
+The computed value may be lazy or eager, but it must invalidate when any dependency changes, including conditional dependencies.
 
-If the library requires an explicit dependency list—as with RxJS or Nanostores—**omit `memo` and `getMemo`**. UStor then uses direct getters evaluated on access. Do not emulate automatic memoization incorrectly.
+If the library requires an explicit dependency list—as with RxJS or Nanostores—**omit `computed` and `getComputed`**. UStor then uses direct getters evaluated on access. Do not emulate automatic dependency tracking incorrectly.
 
 ### 5. Add effects for React integration only when compatible
 
@@ -411,11 +411,11 @@ The core store does not require `api.effect`. Basic adapters without automatic d
 
 ### 6. Configure once and manage lifecycle
 
-Configure `api` before creating stores and keep the same implementation for their lifetime. If your library requires an owner, scope, root, or disposer for memos/effects, create short-lived stores in that lifecycle and dispose them with their owner.
+Configure `api` before creating stores and keep the same implementation for their lifetime. If your library requires an owner, scope, root, or disposer for computed values/effects, create short-lived stores in that lifecycle and dispose them with their owner.
 
 ### 7. Validate the adapter
 
-This Node script checks the required behavior, function preservation, nested updates, arrays, and optional memoization:
+This Node script checks the required behavior, function preservation, nested updates, arrays, and optional computed values:
 
 ```javascript
 import assert from "node:assert/strict";
@@ -449,15 +449,15 @@ assert.equal(state.total, 11);
 state.list[0] = 5;
 assert.equal(state.total, 15);
 
-if (api.memo) {
-	assert.equal((api.getMemo || api.get)(state.$total), 15);
+if (api.computed) {
+	assert.equal((api.getComputed || api.get)(state.$total), 15);
 }
 ```
 
 A production-quality adapter should also verify:
 
 - Whole-array replacement, deletion, and length changes.
-- Conditional memo dependencies and no-op writes.
+- Conditional computed dependencies and no-op writes.
 - Effect cleanup and behavior under nested/batched updates.
 - React StrictMode and unmount behavior when used with `ustor/react`.
 - Owner/scope disposal and long-running memory behavior.
@@ -596,7 +596,7 @@ const total = useStore(() => state.list.reduce((sum, value) => sum + value, 0));
 
 Exported type utilities:
 
-- `SignalApi<Signal, Memo>` for custom adapters.
+- `SignalApi<Signal, Computed>` for custom adapters.
 - `Store<T>` for reactive store inference.
 - `SignalValue<Signal>` for React signal-value inference.
 
@@ -610,7 +610,7 @@ npm run typecheck
 
 The profiler uses Preact Signals and measures:
 
-- High-frequency memoized property updates.
+- High-frequency computed property updates.
 - Batched property updates.
 - Bounded array mutation workloads.
 - Repeated store/effect creation, updates, and disposal with heap/RSS samples.

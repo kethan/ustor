@@ -3,10 +3,10 @@ import { computed, effect, signal } from "@preact/signals-core";
 
 Object.assign(api, {
 	signal,
-	memo: computed,
+	computed,
 	effect,
 	get: (value) => value.value,
-	getMemo: (value) => value.value,
+	getComputed: (value) => value.value,
 	set: (target, value) => { target.value = value; },
 	is: (value) => typeof value?.peek === "function",
 });

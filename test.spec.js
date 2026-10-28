@@ -210,7 +210,7 @@ describe("property descriptors and keys", () => {
 });
 
 describe("derived properties", () => {
-	it("returns fresh primitive getter values without a memo adapter", () => {
+	it("returns fresh primitive getter values without a computed adapter", () => {
 		const state = store({
 			get sum() { return this.a + this.b; },
 			a: 2,
@@ -230,16 +230,16 @@ describe("derived properties", () => {
 		expect(seen).toEqual([5, 8]);
 	});
 
-	it("uses the regular getter adapter for memos when getMemo is omitted", () => {
-		configure({ memo: computed });
+	it("uses the regular getter adapter for computed values when getComputed is omitted", () => {
+		configure({ computed });
 		const state = store({ a: 2, b: 3, get sum() { return this.a + this.b; } });
 		expect(state.sum).toBe(5);
 		state.a = 4;
 		expect(state.sum).toBe(7);
 	});
 
-	it("unwraps memoized getters and exposes the memo through $", () => {
-		configure({ memo: computed, getMemo: (value) => value.value });
+	it("unwraps computed getters and exposes the computed value through $", () => {
+		configure({ computed, getComputed: (value) => value.value });
 		let calls = 0;
 		const state = store({
 			get sum() { calls++; return this.a + this.b; },

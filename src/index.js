@@ -74,14 +74,14 @@ const objectStore = (values, proto) => {
 		const desc = Object.getOwnPropertyDescriptor(values, key),
 			accessor = desc.get || desc.set,
 			getter = desc.get?.bind(state),
-			memoize = getter && api.memo,
+			createComputed = getter && api.computed,
 			signal = accessor ? undefined : api.is(desc.value) ? desc.value : api.signal(resolve(desc.value));
-		let memo;
-		const getSignal = () => getter ? (memo ||= memoize(getter)) : signal;
+		let computed;
+		const getSignal = () => getter ? (computed ||= createComputed(getter)) : signal;
 		Object.defineProperty(state, key, {
 			get: accessor
 				? getter
-					? () => memoize ? (api.getMemo || api.get)(getSignal()) : getter()
+					? () => createComputed ? (api.getComputed || api.get)(getSignal()) : getter()
 					: undefined
 				: () => api.get(signal),
 			set: accessor
@@ -92,7 +92,7 @@ const objectStore = (values, proto) => {
 			enumerable: desc.enumerable,
 		});
 		if (
-			(!accessor || memoize) &&
+			(!accessor || createComputed) &&
 			typeof key === "string" &&
 			!key.startsWith("$") &&
 			!Object.hasOwn(values, "$" + key)

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { BehaviorSubject } from "rxjs";
 import { api, store } from "ustor";
 
-// RxJS is a basic adapter: getters are evaluated on access. Automatic memos
+// RxJS is a basic adapter: getters are evaluated on access. Automatic computed values
 // require explicit dependency lists and are intentionally not configured.
 Object.assign(api, {
 	signal: (value) => new BehaviorSubject(value),
