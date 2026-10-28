@@ -1,4 +1,4 @@
-import { useStore } from "ustor/react";
+import { useSelector } from "ustor/react";
 import { store } from "../preact-setup.mjs";
 
 // Module-level state is useful for client-only shared UI state. For SSR, use
@@ -7,7 +7,7 @@ export const counter = store({ count: 0 });
 const selectCount = () => counter.count;
 
 export default function Counter() {
-	const count = useStore(selectCount);
+	const count = useSelector(selectCount);
 	return (
 		<button type="button" onClick={() => counter.count++}>
 			Count: {count}

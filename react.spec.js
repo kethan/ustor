@@ -4,7 +4,7 @@ import { StrictMode, act, createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { effect, signal } from "@preact/signals-core";
 import { api, store } from "./src/index.js";
-import { useSignal, useStore } from "./src/react.js";
+import { useSelector } from "./src/react.js";
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -31,10 +31,11 @@ afterEach(() => {
 });
 
 describe("React integration", () => {
-	it("rerenders when a single underlying signal changes", () => {
+	it("rerenders when a selected property changes", () => {
 		const state = store({ count: 1 });
+		const selectCount = () => state.count;
 		const Counter = () => {
-			const count = useSignal(state.$count);
+			const count = useSelector(selectCount);
 			return createElement("span", null, count);
 		};
 		act(() => root.render(createElement(Counter)));
@@ -47,7 +48,7 @@ describe("React integration", () => {
 		const state = store({ factor: 2, list: [1, 2] });
 		const selectTotal = () => state.factor * state.list.reduce((sum, value) => sum + value, 0);
 		const Total = () => {
-			const total = useStore(selectTotal);
+			const total = useSelector(selectTotal);
 			return createElement("output", null, total);
 		};
 		act(() => root.render(createElement(Total)));
@@ -64,7 +65,7 @@ describe("React integration", () => {
 		const state = store({ count: 1 });
 		let reads = 0;
 		const selectCount = () => { reads++; return state.count; };
-		const Counter = () => createElement("span", null, useStore(selectCount));
+		const Counter = () => createElement("span", null, useSelector(selectCount));
 		act(() => root.render(createElement(StrictMode, null, createElement(Counter))));
 		expect(container.textContent).toBe("1");
 		act(() => root.unmount());
@@ -78,7 +79,7 @@ describe("React integration", () => {
 		delete api.effect;
 		const state = store({ count: 1 });
 		const selectCount = () => state.count;
-		const Counter = () => createElement("span", null, useStore(selectCount));
+		const Counter = () => createElement("span", null, useSelector(selectCount));
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 		try {
 			expect(() => act(() => root.render(createElement(Counter)))).toThrow(/configure api\.effect/);

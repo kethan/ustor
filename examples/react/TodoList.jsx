@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useStore } from "ustor/react";
+import { useSelector } from "ustor/react";
 import { store } from "../preact-setup.mjs";
 
 export default function TodoList() {
@@ -15,9 +15,9 @@ export default function TodoList() {
 	const selectDraft = useCallback(() => state.draft, [state]);
 
 	// Primitive snapshots notify React about structure and done-field changes.
-	const count = useStore(selectCount);
-	const remaining = useStore(selectRemaining);
-	const draft = useStore(selectDraft);
+	const count = useSelector(selectCount);
+	const remaining = useSelector(selectRemaining);
+	const draft = useSelector(selectDraft);
 
 	/** @param {import("react").FormEvent<HTMLFormElement>} event */
 	const addTodo = (event) => {
