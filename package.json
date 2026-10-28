@@ -1,7 +1,7 @@
 {
 	"name": "ustor",
 	"description": "A tiny, dependency-free reactive store with pluggable signal adapters and optional React hooks.",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"type": "module",
 	"source": "./src/index.js",
 	"types": "./types/index.d.ts",
